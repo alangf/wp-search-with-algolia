@@ -158,8 +158,18 @@
 	  /* Instantiate autocomplete.js */
 	  var autocomplete = algoliaAutocomplete($searchInput[0], config, sources)
 	  .on('autocomplete:selected', function (e, suggestion) {
-		/* Redirect the user when we detect a suggestion selection. */
-		window.location.href = suggestion.permalink;
+		// If Google Analytics is set, ping pageview.
+		if (window && window.ga) {
+			window.ga('set', 'page', suggestion.permalink);
+			window.ga('send', 'pageView');
+			// Wait a bit for the ping, then redirect.
+			setTimeout(function () {
+				window.location.href = suggestion.permalink;
+			}, 100);
+		} else {
+			// Redirect user to suggestion.
+			window.location.href = suggestion.permalink;
+		}
 	  });
 
 	  /* Force the dropdown to be re-drawn on scroll to handle fixed containers. */
@@ -169,6 +179,9 @@
 		  autocomplete.autocomplete.open();
 		}
 	  });
+
+	  // Expose autocomplete instance.
+	  window.autocomplete = autocomplete;
 	});
 
 	jQuery(document).on("click", ".algolia-powered-by-link", function (e) {
