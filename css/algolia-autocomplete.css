@@ -105,9 +105,7 @@
 .aa-dropdown-menu .aa-suggestion .suggestion-post-content {
 	color: #63676d;
 	display: block;
-	white-space: nowrap;
 	text-overflow: ellipsis;
-	overflow: hidden;
 }
 
 .aa-dropdown-menu .aa-suggestion .suggestion-post-content em {
@@ -128,7 +126,7 @@
 }
 
 .aa-dropdown-menu a.suggestion-link.user-suggestion-link {
-	line-height: 32px;
+	line-height: 50px;
 }
 
 
@@ -143,8 +141,8 @@
 	margin-right: 5px;
 	margin-bottom: 5px;
 	border-radius: 3px;
-	width: 32px;
-	height: 32px;
+	width: 50px;
+	height: 50px;
 }
 
 .aa-dropdown-menu .suggestion-user-thumbnail {
@@ -152,8 +150,8 @@
 	margin-right: 5px;
 	margin-bottom: 5px;
 	border-radius: 16px;
-	width: 32px;
-	height: 32px;
+	width: 50px;
+	height: 50px;
 }
 
 /* Footer */
