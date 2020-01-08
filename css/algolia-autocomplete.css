@@ -105,9 +105,7 @@
 .aa-dropdown-menu .aa-suggestion .suggestion-post-content {
 	color: #63676d;
 	display: block;
-	white-space: nowrap;
 	text-overflow: ellipsis;
-	overflow: hidden;
 }
 
 .aa-dropdown-menu .aa-suggestion .suggestion-post-content em {
