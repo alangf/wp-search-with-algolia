@@ -1,8 +1,25 @@
 <?php
+/**
+ * Algolia_Template_Loader class file.
+ *
+ * @author  WebDevStudios <contact@webdevstudios.com>
+ * @since   1.0.0
+ *
+ * @package WebDevStudios\WPSWA
+ */
 
+/**
+ * Class Algolia_Template_Loader
+ *
+ * @since 1.0.0
+ */
 class Algolia_Template_Loader {
 
 	/**
+	 * The Algolia Plugin.
+	 *
+	 * @since 1.0.0
+	 *
 	 * @var Algolia_Plugin
 	 */
 	private $plugin;
@@ -10,13 +27,28 @@ class Algolia_Template_Loader {
 	/**
 	 * Algolia_Template_Loader constructor.
 	 *
-	 * @param Algolia_Plugin $plugin
+	 * @author  WebDevStudios <contact@webdevstudios.com>
+	 * @since   1.0.0
+	 *
+	 * @param Algolia_Plugin $plugin The Algolia Plugin.
 	 */
 	public function __construct( Algolia_Plugin $plugin ) {
 		$this->plugin = $plugin;
 
+		$in_footer = Algolia_Utils::get_scripts_in_footer_argument();
+
 		// Inject Algolia configuration in a JavaScript variable.
-		add_filter( 'wp_head', array( $this, 'load_algolia_config' ) );
+		if ( true === $in_footer ) {
+			add_filter(
+				'wp_footer',
+				[ $this, 'load_algolia_config' ]
+			);
+		} else {
+			add_filter(
+				'wp_head',
+				[ $this, 'load_algolia_config' ]
+			);
+		}
 
 		// Listen for native templates to override.
 		add_filter( 'template_include', array( $this, 'template_loader' ) );
@@ -24,10 +56,21 @@ class Algolia_Template_Loader {
 		// Load autocomplete.js search experience if its enabled.
 		if ( $this->should_load_autocomplete() ) {
 			add_filter( 'wp_enqueue_scripts', array( $this, 'enqueue_autocomplete_scripts' ) );
-			add_filter( 'wp_head', array( $this, 'load_autocomplete_template' ), PHP_INT_MAX );
+
+			if ( true === $in_footer ) {
+				add_filter( 'wp_footer', array( $this, 'load_autocomplete_template' ) );
+			} else {
+				add_filter( 'wp_head', array( $this, 'load_autocomplete_template' ) );
+			}
 		}
 	}
 
+	/**
+	 * Load config.
+	 *
+	 * @author  WebDevStudios <contact@webdevstudios.com>
+	 * @since   1.0.0
+	 */
 	public function load_algolia_config() {
 		$settings            = $this->plugin->get_settings();
 		$autocomplete_config = $this->plugin->get_autocomplete_config();
@@ -37,7 +80,7 @@ class Algolia_Template_Loader {
 			'application_id'     => $settings->get_application_id(),
 			'search_api_key'     => $settings->get_search_api_key(),
 			'powered_by_enabled' => $settings->is_powered_by_enabled(),
-			'query'              => isset( $_GET['s'] ) ? wp_unslash( $_GET['s'] )  : '',
+			'query'              => get_search_query(),
 			'autocomplete'       => array(
 				'sources'        => $autocomplete_config->get_config(),
 				'input_selector' => (string) apply_filters( 'algolia_autocomplete_input_selector', "input[name='s']:not('.no-autocomplete')" ),
@@ -61,6 +104,14 @@ class Algolia_Template_Loader {
 		echo '<script type="text/javascript">var algolia = ' . wp_json_encode( $config ) . ';</script>';
 	}
 
+	/**
+	 * Determines whether we should load autocomplete.
+	 *
+	 * @author  WebDevStudios <contact@webdevstudios.com>
+	 * @since   1.0.0
+	 *
+	 * @return bool
+	 */
 	private function should_load_autocomplete() {
 		$settings     = $this->plugin->get_settings();
 		$autocomplete = $this->plugin->get_autocomplete_config();
@@ -80,6 +131,9 @@ class Algolia_Template_Loader {
 
 	/**
 	 * Enqueue Algolia autocomplete.js scripts.
+	 *
+	 * @author  WebDevStudios <contact@webdevstudios.com>
+	 * @since   1.0.0
 	 */
 	public function enqueue_autocomplete_scripts() {
 
@@ -105,7 +159,10 @@ class Algolia_Template_Loader {
 	 * Templates are in the 'templates' folder. algolia looks for theme.
 	 * overrides in /your-theme/algolia/ by default.
 	 *
-	 * @param mixed $template
+	 * @author  WebDevStudios <contact@webdevstudios.com>
+	 * @since   1.0.0
+	 *
+	 * @param mixed $template The template to load.
 	 *
 	 * @return string
 	 */
@@ -120,6 +177,11 @@ class Algolia_Template_Loader {
 	}
 
 	/**
+	 * Load the instantsearch template.
+	 *
+	 * @author  WebDevStudios <contact@webdevstudios.com>
+	 * @since   1.0.0
+	 *
 	 * @return string
 	 */
 	public function load_instantsearch_template() {
@@ -140,14 +202,22 @@ class Algolia_Template_Loader {
 	}
 
 	/**
-	 * @return string
+	 * Load the autocomplete template.
+	 *
+	 * @author  WebDevStudios <contact@webdevstudios.com>
+	 * @since   1.0.0
 	 */
 	public function load_autocomplete_template() {
 		require $this->locate_template( 'autocomplete.php' );
 	}
 
 	/**
-	 * @param string $file
+	 * Locate a template.
+	 *
+	 * @author  WebDevStudios <contact@webdevstudios.com>
+	 * @since   1.0.0
+	 *
+	 * @param string $file The template file.
 	 *
 	 * @return string
 	 */

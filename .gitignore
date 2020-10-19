@@ -5,9 +5,8 @@
 .editorconfig
 Thumbs.db
 bin
-dist
 public
 node_modules
 tests
 tmp
-vendor
+/vendor
